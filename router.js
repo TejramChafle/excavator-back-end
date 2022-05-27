@@ -8,8 +8,8 @@ const _router = (app) => {
     });
     app.use('/auth', require('./routes/auth'));
     app.use('/contact', require('./routes/contact'));
-    // app.use('/profile', require('./routes/profile'));
-    // app.use('/timesheets', require('./routes/timesheets'));
+    app.use('/user', require('./routes/user'));
+    app.use('/business', require('./routes/business'));
     app.use('/purchases', require('./routes/purchases'));
     // app.use('/events', require('./routes/events'));
     app.use('/returnings', require('./routes/returnings'));

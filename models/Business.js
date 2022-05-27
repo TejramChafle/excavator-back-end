@@ -1,25 +1,39 @@
 const mongoose = require('mongoose');
-var bcrypt = require('bcrypt');
 const Paginate = require('mongoose-paginate');
 // The user schema only defines the application level user. This will help to manage authentication & authorization
-const UserSchema = mongoose.Schema({
+const BusinessSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     name: {
         type: String,
         required: true
     },
-    role: {
+    tagline: {
         type: String,
-        required: true
+        required: false
     },
-    designation: {
+    about: {
         type: String,
-        required: true
+        required: false
     },
-    business: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Business',
-        required: true
+    logo: {
+        type: String,
+        required: false
+    },
+    owner: {
+        type: {
+            name: String,
+            email: String,
+            phone: String
+        },
+        required: false
+    },
+    panNo: {
+        type: String,
+        required: false
+    },
+    gstNo: {
+        type: String,
+        required: false
     },
     email: {
         type: String,
@@ -27,21 +41,17 @@ const UserSchema = mongoose.Schema({
         unique: true,
         trim: true
     },
-    password: {
-        type: String,
-        required: true
-    },
     phone: {
         type: String,
         required: false,
-        unique: true,
         trim: true
     },
-    otp: {
+    alternatePhone: {
         type: String,
-        required: false
+        required: false,
+        trim: true
     },
-    token: {
+    address: {
         type: String,
         required: false
     },
@@ -49,20 +59,11 @@ const UserSchema = mongoose.Schema({
     isActive: {
         type: Boolean,
         default: true
-    },
-    avatar: {
-        type: String,
-        required: false
     }
 },
 {
     timestamps: true
 });
 
-UserSchema.plugin(Paginate);
-// compare encrypted password with the password saved in db
-UserSchema.methods.comparePassword = function (password) {
-    return bcrypt.compare(password, this.password);
-}
-
-module.exports = mongoose.model('User', UserSchema);
+BusinessSchema.plugin(Paginate);
+module.exports = mongoose.model('Business', BusinessSchema);
