@@ -2,23 +2,23 @@ var express     = require('express');
 var mongoose    = require('mongoose');
 const auth      = require('../auth');
 var router      = express.Router();
-var Service     = require('../models/Service');
+var Vehicle     = require('../models/Vehicle');
 /**
  * @swagger
- * /service:
+ * /vehicle:
  *   get:
  *     tags:
- *       - Service
- *     description: Returns all services
+ *       - Vehicle
+ *     description: Returns all vehicles
  *     security:
  *       - bearerAuth: []
  *     produces:
  *       - application/json
  *     responses:
  *       200:
- *         description: An array of services
+ *         description: An array of vehicles
  */
-// GET users WITH filter, sorting & pagination
+// GET vehicles WITH filter, sorting & pagination
 router.get('/', auth, (req, resp) => {
     let filter = {};
     filter.active = req.query.is_active || true;
@@ -27,11 +27,10 @@ router.get('/', auth, (req, resp) => {
     if (req.query.rate) filter.rate = req.query.rate;
     if (req.query.billingType) filter.billingType = req.query.billingType;
     filter.business = req.query.businessId;
-    Service.paginate(filter, {
+    Vehicle.paginate(filter, {
             sort: { _id: req.query.sort_order },
             page: parseInt(req.query.page),
-            limit: parseInt(req.query.limit),
-            populate: [{ path: 'createdBy', match: {} }, { path: 'updatedBy', match: {} }],
+            limit: parseInt(req.query.limit)
         }, (error, result) => {
         // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
         if (error) return resp.status(500).json({
@@ -44,28 +43,28 @@ router.get('/', auth, (req, resp) => {
 
 /**
  * @swagger
- * /service/{id}:
+ * /vehicle/{id}:
  *   get:
  *     tags:
- *       - Service
- *     description: Returns a single service
+ *       - Vehicle
+ *     description: Returns a single vehicle
  *     produces:
  *       - application/json
  *     parameters:
  *       - name: id
- *         description: Service's id
+ *         description: Vehicle's id
  *         in: path
  *         required: true
  *         type: string
  *     responses:
  *       200:
- *         description: A single service
+ *         description: A single vehicle
  */
 
-// GET SINGLE SERVICE BY ID
+// GET SINGLE Vehicle BY ID
 router.get('/:id', auth, (req, resp, next) => {
-    Service.findById(req.params.id).exec().then(service => {
-        return resp.status(200).json(service);
+    Vehicle.findById(req.params.id).exec().then(vehicle => {
+        return resp.status(200).json(vehicle);
     }).catch(error => {
         console.log('error : ', error);
         // 204 : No content. There is no content to send for this request, but the headers may be useful.
@@ -78,39 +77,39 @@ router.get('/:id', auth, (req, resp, next) => {
 
 /**
  * @swagger
- * /service:
+ * /vehicle:
  *   post:
  *     tags:
- *       - Service
- *     description: Creates a new service
+ *       - Vehicle
+ *     description: Creates a new vehicle
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: service
- *         description: Service object
+ *       - name: vehicle
+ *         description: Vehicle object
  *         in: body
  *         required: true
  *         schema:
- *           $ref: '#/definitions/Service'
+ *           $ref: '#/definitions/Vehicle'
  *     responses:
  *       201:
- *         description: Service created successfully
+ *         description: Vehicle created successfully
  */
-// SAVE SERVICE
+// SAVE Vehicle
 router.post('/', (req, resp, next) => {
     console.log('REQUEST: ', req);
-    // First check if the service with name already exists.
-    Service.findOne({ name: req.body.name, active: true }).exec()
-        .then(service => {
-            // If the service with name already exists, then return error
-            if (service) {
+    // First check if the vehicle with name already exists.
+    Vehicle.findOne({ name: req.body.name, active: true }).exec()
+        .then(vehicle => {
+            // If the vehicle with name already exists, then return error
+            if (vehicle) {
                 // 409 : Conflict. The request could not be completed because of a conflict.
                 return resp.status(409).json({
-                    message: "The service with name " + req.body.name + " already exist."
+                    message: "The vehicle with name " + req.body.name + " already exist."
                 });
             } else {
-                // Since the service doesn't exist, then save the detail
-                const _service = new Service({
+                // Since the vehicle doesn't exist, then save the detail
+                const _service = new Vehicle({
                     _id: new mongoose.Types.ObjectId(),
                     ...req.body
                 });
@@ -119,7 +118,7 @@ router.post('/', (req, resp, next) => {
                     .then(result => {
                         console.log(result);
                         return resp.status(201).json({
-                            message: "Service added successfully",
+                            message: "Vehicle added successfully",
                             result: result
                         });
                     })
@@ -142,27 +141,27 @@ router.post('/', (req, resp, next) => {
 
 /**
 * @swagger
-* /service/{id}:
+* /vehicle/{id}:
 *   put:
 *     tags:
-*       - Service
-*     description: Updates a single service
+*       - Vehicle
+*     description: Updates a single vehicle
 *     produces: application/json
 *     parameters:
-*       name: service
+*       name: vehicle
 *       in: body
-*       description: Fields for the Service resource
+*       description: Fields for the Vehicle resource
 *       schema:
 *         type: array
-*         $ref: '#/definitions/Service'
+*         $ref: '#/definitions/Vehicle'
 *     responses:
 *       200:
 *         description: Successfully updated
 */
-// UPDATE SERVICE
+// UPDATE Vehicle
 router.put('/:id', auth, (req, resp, next) => {
-    Service.findByIdAndUpdate(req.params.id, req.body).exec().then(service => {
-        return resp.status(200).json(service);
+    Vehicle.findByIdAndUpdate(req.params.id, req.body).exec().then(vehicle => {
+        return resp.status(200).json(vehicle);
     }).catch(error => {
         // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
         return resp.status(500).json({
@@ -174,16 +173,16 @@ router.put('/:id', auth, (req, resp, next) => {
 
 /**
  * @swagger
- * /service/{id}:
+ * /vehicle/{id}:
  *   delete:
  *     tags:
- *       - Service
- *     description: Deletes a single service
+ *       - Vehicle
+ *     description: Deletes a single vehicle
  *     produces:
  *       - application/json
  *     parameters:
  *       - name: id
- *         description: Service's id
+ *         description: Vehicle's id
  *         in: path
  *         required: true
  *         type: integer
@@ -191,10 +190,10 @@ router.put('/:id', auth, (req, resp, next) => {
  *       200:
  *         description: Successfully deleted
  */
-// DELETE SERVICE (Hard delete. This will delete the entire service detail. Only application admin should be allowed to perform this action )
+// DELETE Vehicle (Hard delete. This will delete the entire vehicle detail. Only application admin should be allowed to perform this action )
 router.delete('/:id', auth, (req, resp, next) => {
-    Service.findByIdAndRemove(req.params.id).exec().then(service => {
-        return resp.status(200).json(service);
+    Vehicle.findByIdAndRemove(req.params.id).exec().then(vehicle => {
+        return resp.status(200).json(vehicle);
     }).catch(error => {
         console.log('error : ', error);
         // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.

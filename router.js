@@ -10,9 +10,9 @@ const _router = (app) => {
     app.use('/contact', require('./routes/contact'));
     app.use('/user', require('./routes/user'));
     app.use('/business', require('./routes/business'));
-    app.use('/purchases', require('./routes/purchases'));
-    // app.use('/events', require('./routes/events'));
-    app.use('/returnings', require('./routes/returnings'));
+    app.use('/service', require('./routes/service'));
+    app.use('/tag', require('./routes/tag'));
+    app.use('/vehicle', require('./routes/vehicle'));
 
     // Service to save device token and push notification
     app.use('/push', require('./routes/push'));

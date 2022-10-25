@@ -1,25 +1,32 @@
 const mongoose = require('mongoose');
 const Paginate = require('mongoose-paginate');
 
-const ServiceSchema = mongoose.Schema({
-	_id: mongoose.Schema.Types.ObjectId,
+const VehicleSchema = new mongoose.Schema({
+    _id: mongoose.Schema.Types.ObjectId,
+    // name of modules including contact/todos/work/reminder
     name: {
-		type: String,
-		required: true
-	},
-	rate: {
-        type: Number,
-		required: true
-    },
-    // Per hour/day/trip/person [Configuration]
-    billingType: {
         type: String,
-		required: true
+        required: true
     },
-    // comment/note
-	description: {
+    // CAR/TRACTOR/TRUCK/DOZER etc.
+    type: {
         type: String,
-        required: false
+        required: true
+    },
+    // MH49-R-2113
+    number: {
+        type: String,
+        required: true
+    },
+    // 5 ton / 300 sqft etc.
+    capacity: {
+        type: String,
+        required: true
+    },
+    // petrol/diesel/cng
+    fuel: {
+        type: String,
+        required: true
     },
     // soft delete flag
     active: {
@@ -49,5 +56,5 @@ const ServiceSchema = mongoose.Schema({
     timestamps: true
 });
 
-ServiceSchema.plugin(Paginate);
-module.exports = mongoose.model('Service', ServiceSchema);
+VehicleSchema.plugin(Paginate);
+module.exports = mongoose.model('Vehicle', VehicleSchema);

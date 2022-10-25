@@ -9,7 +9,7 @@ require('../helper/handler');
 require('../helper/mailer');
 
 // USER SIGNUP
-router.post("/signup", async (req, resp) => {
+router.post("/signup", auth, async (req, resp) => {
     // console.log({req});
     // CHECK if the email & password matches with the password present in db
     User.findOne({ email: req.body.email, isActive: true }).populate('user').exec()
@@ -37,7 +37,7 @@ router.post("/signup", async (req, resp) => {
                     role: req.body.role,
                     designation: req.body.designation,
                     avatar: req.body.avatar,
-                    businessId: req.body.businessId,
+                    business: req.body.businessId,
                     password: password
                 });
                 await _user.save().then(registeredUser => {
@@ -77,7 +77,7 @@ router.post("/signup", async (req, resp) => {
 });
 
 // GET users WITH filter, sorting & pagination
-router.get('/users', (req, resp) => {
+router.get('/', auth, async (req, resp) => {
     let filter = {};
     // filter.isActive = req.query.is_active || true;
     filter.business = req.query.businessId;
@@ -93,7 +93,7 @@ router.get('/users', (req, resp) => {
             limit: parseInt(req.query.limit)
             // populate: 'devices'
         }, (error, result) => {
-        // console.log({error, result});
+        console.log({error, result});
         // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
         if (error) return resp.status(500).json({
             error: error
@@ -122,16 +122,13 @@ router.get('/users', (req, resp) => {
 *         description: Successfully updated
 */
 // UPDATE USER
-router.put('user/:id', auth, async(req, resp, next) => {
+router.put('/:id', auth, async(req, resp, next) => {
     console.log('req.body', req.body);
     // UPDATE user
     await User.updateOne(
-        { _id: req.body.id },
+        { _id: req.body._id },
         {
-            items: req.body.items,
-            expenditure: req.body.expenditure._id,
-            updatedBy: req.body.updatedBy,
-            updatedDate: req.body.updatedDate
+            ...req.body
         }).then(user => {
             return resp.status(200).json(user);
         }).catch(error => { errorHandler(error, req, resp, next); })

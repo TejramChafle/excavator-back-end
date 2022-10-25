@@ -13,12 +13,24 @@ const TagSchema = new mongoose.Schema({
         required: true
     },
     // soft delete flag
-    isActive: {
+    active: {
         type: Boolean,
         default: true
     },
+    // business id
+    business: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Business',
+        required: true
+    },
     // created by user id
     createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    // last updated by user id
+    updatedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true

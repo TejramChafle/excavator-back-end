@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-var bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 const Paginate = require('mongoose-paginate');
 // The user schema only defines the application level user. This will help to manage authentication & authorization
 const UserSchema = mongoose.Schema({
