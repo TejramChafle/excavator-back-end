@@ -9,7 +9,7 @@ require('../helper/handler');
 require('../helper/mailer');
 
 // USER SIGNUP
-router.post("/signup", auth, async (req, resp) => {
+router.post("/", auth, async (req, resp) => {
     // console.log({req});
     // CHECK if the email & password matches with the password present in db
     User.findOne({ email: req.body.email, isActive: true }).populate('user').exec()
@@ -28,7 +28,7 @@ router.post("/signup", auth, async (req, resp) => {
             // Since the user doesn't exist, then save the detail
             try {
                 // if the provided token is valid, save user information and login user
-                const password = await bcrypt.hash(req.body.password, 10);
+                const password = await bcrypt.hash(req.body.phone, 10);
                 const _user = new User({
                     _id: new mongoose.Types.ObjectId(),
                     name: req.body.name,
@@ -37,7 +37,7 @@ router.post("/signup", auth, async (req, resp) => {
                     role: req.body.role,
                     designation: req.body.designation,
                     avatar: req.body.avatar,
-                    business: req.body.businessId,
+                    business: req.body.business,
                     password: password
                 });
                 await _user.save().then(registeredUser => {
@@ -91,7 +91,6 @@ router.get('/', auth, async (req, resp) => {
             sort: { _id: req.query.sort_order },
             page: parseInt(req.query.page),
             limit: parseInt(req.query.limit)
-            // populate: 'devices'
         }, (error, result) => {
         console.log({error, result});
         // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
@@ -132,6 +131,38 @@ router.put('/:id', auth, async(req, resp, next) => {
         }).then(user => {
             return resp.status(200).json(user);
         }).catch(error => { errorHandler(error, req, resp, next); })
+});
+
+/**
+ * @swagger
+ * /user/{id}:
+ *   delete:
+ *     tags:
+ *       - User
+ *     description: Deletes a single user
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: id
+ *         description: User's id
+ *         in: path
+ *         required: true
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: Successfully deleted
+ */
+// DELETE USER (Hard delete. This will delete the entire user detail. Only application admin should be allowed to perform this action )
+router.delete('/:id', auth, (req, resp, next) => {
+    User.findByIdAndRemove(req.params.id).exec().then(user => {
+        return resp.status(200).json(user);
+    }).catch(error => {
+        console.log('error : ', error);
+        // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
+        return resp.status(500).json({
+            error: error
+        });
+    });
 });
 
 module.exports = router;

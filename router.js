@@ -13,6 +13,7 @@ const _router = (app) => {
     app.use('/service', require('./routes/service'));
     app.use('/tag', require('./routes/tag'));
     app.use('/vehicle', require('./routes/vehicle'));
+    app.use('/petrol-pump', require('./routes/petrol-pump'));
 
     // Service to save device token and push notification
     app.use('/push', require('./routes/push'));

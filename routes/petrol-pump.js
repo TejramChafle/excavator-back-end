@@ -1,15 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const Tag = require('../models/Tag');
+const PetrolPump = require('../models/PetrolPump');
 const auth = require('../auth');
 const router = express.Router();
 
 /**
  * @swagger
- * /tag:
+ * /petrol-pump:
  *   get:
  *     tags:
- *       - Tag
+ *       - PetrolPump
  *     description: Returns all tags
  *     security:
  *       - bearerAuth: []
@@ -28,7 +28,7 @@ router.get('/', auth, (req, resp) => {
     if (req.query.purpose) filter.purpose = new RegExp('.*' + req.query.purpose + '.*', 'i');
     if (req.query.createdBy) filter.createdBy = req.query.createdBy;
     if (req.query.updatedBy) filter.updatedBy = req.query.updatedBy;
-    Tag.paginate(filter, {
+    PetrolPump.paginate(filter, {
         sort: { _id: req.query.sortOrder },
         page: parseInt(req.query.page),
         limit: parseInt(req.query.limit),
@@ -45,27 +45,27 @@ router.get('/', auth, (req, resp) => {
 
 /**
  * @swagger
- * /tag/{id}:
+ * /petrol-pump/{id}:
  *   get:
  *     tags:
- *       - Tag
- *     description: Returns a single tag
+ *       - PetrolPump
+ *     description: Returns a single petrol pump
  *     produces:
  *       - application/json
  *     parameters:
  *       - name: id
- *         description: Tag's id
+ *         description: PetrolPump's id
  *         in: path
  *         required: true
  *         type: string
  *     responses:
  *       200:
- *         description: A single tag
+ *         description: A single petrol pump
  */
 
-// GET SINGLE TASK BY ID
+// GET SINGLE PETROL PUMP BY ID
 router.get('/:id', auth, (req, resp, next) => {
-    Tag.findById(req.params.id).exec().then(tag => {
+    PetrolPump.findById(req.params.id).exec().then(tag => {
         return resp.status(200).json(tag);
     }).catch(error => {
         console.log('error : ', error);
@@ -79,40 +79,36 @@ router.get('/:id', auth, (req, resp, next) => {
 
 /**
  * @swagger
- * /tag:
+ * /petrol-pump:
  *   post:
  *     tags:
- *       - Tag
+ *       - PetrolPump
  *     description: Creates a new tag
  *     produces:
  *       - application/json
  *     parameters:
- *       - name: tag
- *         description: Tag object
+ *       - name: petrol pump
+ *         description: PetrolPump object
  *         in: body
  *         required: true
  *         schema:
- *           $ref: '#/definitions/Tag'
+ *           $ref: '#/definitions/PetrolPump'
  *     responses:
  *       201:
- *         description: Tag created successfully
+ *         description: PetrolPump created successfully
  */
-// SAVE TASK
+// SAVE PETROL PUMP
 router.post('/', auth, (req, resp, next) => {
     // console.log(req.body);
-    const tag = new Tag({
+    const tag = new PetrolPump({
         _id: new mongoose.Types.ObjectId(),
-        name: req.body.name,
-        purpose: req.body.purpose,
-        business: req.body.business,
-        createdBy: req.body.createdBy,
-        updatedBy: req.body.createdBy
+        ...req.body
     });
     tag.save()
         .then(result => {
             console.log(result);
             return resp.status(201).json({
-                message: "Tag created successfully",
+                message: "Petrol Pump created successfully",
                 result: result
             });
         })
@@ -127,26 +123,26 @@ router.post('/', auth, (req, resp, next) => {
 
 /**
 * @swagger
-* /tag/{id}:
+* /petrol-pump/{id}:
 *   put:
 *     tags:
-*       - Tag
-*     description: Updates a single tag
+*       - PetrolPump
+*     description: Updates a single petrol pump
 *     produces: application/json
 *     parameters:
-*       name: tag
+*       name: petrol pump
 *       in: body
-*       description: Fields for the Tag resource
+*       description: Fields for the PetrolPump resource
 *       schema:
 *         type: array
-*         $ref: '#/definitions/Tag'
+*         $ref: '#/definitions/PetrolPump'
 *     responses:
 *       200:
 *         description: Successfully updated
 */
-// UPDATE TASK
+// UPDATE PETROL PUMP
 router.put('/:id', auth, (req, resp, next) => {
-    Tag.findByIdAndUpdate(req.params.id, req.body).exec().then(tag => {
+    PetrolPump.findByIdAndUpdate(req.params.id, req.body).exec().then(tag => {
         return resp.status(200).json(tag);
     }).catch(error => {
         // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
@@ -159,16 +155,16 @@ router.put('/:id', auth, (req, resp, next) => {
 
 /**
  * @swagger
- * /tag/{id}:
+ * /petrol-pump/{id}:
  *   delete:
  *     tags:
- *       - Tag
- *     description: Deletes a single tag
+ *       - PetrolPump
+ *     description: Deletes a single petrol pump
  *     produces:
  *       - application/json
  *     parameters:
  *       - name: id
- *         description: Tag's id
+ *         description: PetrolPump's id
  *         in: path
  *         required: true
  *         type: integer
@@ -176,9 +172,9 @@ router.put('/:id', auth, (req, resp, next) => {
  *       200:
  *         description: Successfully deleted
  */
-// DELETE TASK (Hard delete. This will delete the entire tag detail. Only application admin should be allowed to perform this action )
+// DELETE PETROL PUMP (Hard delete. This will delete the entire tag detail. Only application admin should be allowed to perform this action )
 router.delete('/:id', auth, (req, resp, next) => {
-    Tag.findByIdAndRemove(req.params.id).exec().then(tag => {
+    PetrolPump.findByIdAndRemove(req.params.id).exec().then(tag => {
         return resp.status(200).json(tag);
     }).catch(error => {
         console.log('error : ', error);

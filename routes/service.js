@@ -31,7 +31,7 @@ router.get('/', auth, (req, resp) => {
             sort: { _id: req.query.sort_order },
             page: parseInt(req.query.page),
             limit: parseInt(req.query.limit),
-            populate: [{ path: 'createdBy', match: {} }, { path: 'updatedBy', match: {} }],
+            populate: [{ path: 'createdBy', match: {} }, { path: 'updatedBy', match: {} }]
         }, (error, result) => {
         // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
         if (error) return resp.status(500).json({
