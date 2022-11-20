@@ -13,7 +13,7 @@ const CustomerSchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-        required: true
+        required: false
     },
     email: {
         type: String,
@@ -21,17 +21,30 @@ const CustomerSchema = new mongoose.Schema({
         trim: true,
         required: false
     },
-    ownerName: {
+    owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Contact',
         required: false
     },
+    // business id
+    business: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Business',
+        required: true
+    },
     // soft delete flag
     isActive: {
-        type: Boolean, default: true
+        type: Boolean,
+        default: true
     },
     // created by user id
     createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    // created by user id
+    updatedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
@@ -42,4 +55,4 @@ const CustomerSchema = new mongoose.Schema({
 });
 
 CustomerSchema.plugin(Paginate);
-module.exports = mongoose.model('Tag', CustomerSchema);
+module.exports = mongoose.model('Customer', CustomerSchema);

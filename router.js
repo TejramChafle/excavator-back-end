@@ -14,6 +14,9 @@ const _router = (app) => {
     app.use('/tag', require('./routes/tag'));
     app.use('/vehicle', require('./routes/vehicle'));
     app.use('/petrol-pump', require('./routes/petrol-pump'));
+    app.use('/customer', require('./routes/customer'));
+    app.use('/employee', require('./routes/employee'));
+    app.use('/work', require('./routes/work'));
 
     // Service to save device token and push notification
     app.use('/push', require('./routes/push'));

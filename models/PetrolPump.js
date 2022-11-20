@@ -18,9 +18,13 @@ const PetrolPumpSchema = new mongoose.Schema({
         ref: 'Contact',
         required: false
     },
-    // petrol/diesel/cng rate
-    rate: {
-        type: Array,
+    // petrol rate
+    petrolRate: {
+        type: Number,
+        required: true
+    },
+    dieselRate: {
+        type: Number,
         required: true
     },
     // soft delete flag

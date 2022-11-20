@@ -8,18 +8,18 @@ const router = express.Router();
  * @swagger
  * /petrol-pump:
  *   get:
- *     tags:
+ *     petrol-pump:
  *       - PetrolPump
- *     description: Returns all tags
+ *     description: Returns all petrol-pump
  *     security:
  *       - bearerAuth: []
  *     produces:
  *       - application/json
  *     responses:
  *       200:
- *         description: An array of tags
+ *         description: An array of petrol-pump
  */
-// GET tags (Only active) WITH filter & pagination
+// GET petrol-pump (Only active) WITH filter & pagination
 router.get('/', auth, (req, resp) => {
     let filter = {};
     filter.active = req.query.is_active || true;
@@ -47,7 +47,7 @@ router.get('/', auth, (req, resp) => {
  * @swagger
  * /petrol-pump/{id}:
  *   get:
- *     tags:
+ *     petrol-pump:
  *       - PetrolPump
  *     description: Returns a single petrol pump
  *     produces:
@@ -62,7 +62,6 @@ router.get('/', auth, (req, resp) => {
  *       200:
  *         description: A single petrol pump
  */
-
 // GET SINGLE PETROL PUMP BY ID
 router.get('/:id', auth, (req, resp, next) => {
     PetrolPump.findById(req.params.id).exec().then(tag => {
@@ -81,9 +80,9 @@ router.get('/:id', auth, (req, resp, next) => {
  * @swagger
  * /petrol-pump:
  *   post:
- *     tags:
+ *     petrol-pump:
  *       - PetrolPump
- *     description: Creates a new tag
+ *     description: Creates a new petrol pump
  *     produces:
  *       - application/json
  *     parameters:
@@ -95,16 +94,16 @@ router.get('/:id', auth, (req, resp, next) => {
  *           $ref: '#/definitions/PetrolPump'
  *     responses:
  *       201:
- *         description: PetrolPump created successfully
+ *         description: Petrol pump created successfully
  */
 // SAVE PETROL PUMP
 router.post('/', auth, (req, resp, next) => {
-    // console.log(req.body);
-    const tag = new PetrolPump({
+    console.log(req.body);
+    const pump = new PetrolPump({
         _id: new mongoose.Types.ObjectId(),
         ...req.body
     });
-    tag.save()
+    pump.save()
         .then(result => {
             console.log(result);
             return resp.status(201).json({
@@ -125,7 +124,7 @@ router.post('/', auth, (req, resp, next) => {
 * @swagger
 * /petrol-pump/{id}:
 *   put:
-*     tags:
+*     petrol-pump:
 *       - PetrolPump
 *     description: Updates a single petrol pump
 *     produces: application/json
@@ -157,7 +156,7 @@ router.put('/:id', auth, (req, resp, next) => {
  * @swagger
  * /petrol-pump/{id}:
  *   delete:
- *     tags:
+ *     petrol-pump:
  *       - PetrolPump
  *     description: Deletes a single petrol pump
  *     produces:

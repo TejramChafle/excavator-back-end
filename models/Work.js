@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Paginate = require('mongoose-paginate');
 
 const WorkSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
@@ -12,16 +13,16 @@ const WorkSchema = mongoose.Schema({
 		required: true
     },
     startTime: {
-		type: Date,
+		type: String,
 		required: true
     },
     endTime: {
-		type: Date,
+		type: String,
 		required: true
     },
-    client: {
+    customer: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Client',
+        ref: 'Customer',
 		required: true
     },
     site: {
@@ -41,6 +42,10 @@ const WorkSchema = mongoose.Schema({
     	type: Number,
     	required: true
     },
+    total: {
+    	type: Number,
+    	required: true
+    },
     description: {
         type: String,
         required: false
@@ -49,6 +54,12 @@ const WorkSchema = mongoose.Schema({
     isActive: {
         type: Boolean,
         default: true
+    },
+    // business id
+    business: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Business',
+        required: true
     },
     // created by user id
     createdBy: {
@@ -67,16 +78,6 @@ const WorkSchema = mongoose.Schema({
     timestamps: true
 });
 
+WorkSchema.plugin(Paginate);
 module.exports = mongoose.model('Work', WorkSchema);
-
-/* WorkSchema.virtual('PMDetails', {
-  ref: 'Metrics', // The model to use
-  localField: 'metid', // Find people where `localField`
-  foreignField: 'metid', // is equal to `foreignField`
-  // If `justOne` is true, 'members' will be a single doc as opposed to
-  // an array. `justOne` is false by default.
-  justOne: false
-  //,
-  //options: { sort: { name: -1 }, limit: 5 } // Query options, see http://bit.ly/mongoose-query-options
-}); */
 
