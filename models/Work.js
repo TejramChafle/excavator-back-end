@@ -50,8 +50,12 @@ const WorkSchema = mongoose.Schema({
         type: String,
         required: false
     },
+    /* invoiceId: {
+        type: String,
+        required: false
+    }, */
     // soft delete flag
-    isActive: {
+    active: {
         type: Boolean,
         default: true
     },
