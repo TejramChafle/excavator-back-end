@@ -14,11 +14,11 @@ const WorkSchema = mongoose.Schema({
     },
     startTime: {
 		type: String,
-		required: true
+		required: false
     },
     endTime: {
 		type: String,
-		required: true
+		required: false
     },
     customer: {
         type: mongoose.Schema.Types.ObjectId,
@@ -32,7 +32,7 @@ const WorkSchema = mongoose.Schema({
     workers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Employee',
-    	required: true
+    	required: false
     }],
     rate: {
     	type: Number,
@@ -50,10 +50,16 @@ const WorkSchema = mongoose.Schema({
         type: String,
         required: false
     },
-    /* invoiceId: {
-        type: String,
-        required: false
-    }, */
+    invoiceId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Invoice',
+    	required: false
+    },
+    vehicle: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Vehicle',
+    	required: false
+    },
     // soft delete flag
     active: {
         type: Boolean,

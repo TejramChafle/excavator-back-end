@@ -1,9 +1,10 @@
-var express     = require('express');
-var mongoose    = require('mongoose');
+const express     = require('express');
+const mongoose    = require('mongoose');
 const auth      = require('../auth');
-var router      = express.Router();
-var Invoice     = require('../models/Invoice');
-var Transaction = require('../models/Transaction');
+const router      = express.Router();
+const Invoice     = require('../models/Invoice');
+const Transaction = require('../models/Transaction');
+const Work  = require('../models/Work');
 
 /**
  * @swagger
@@ -110,12 +111,14 @@ router.get('/:id', auth, (req, resp, next) => {
  */
 // SAVE Invoice
 router.post('/', (req, resp, next) => {
-    console.log('REQUEST: ', req);
-    const invoiceId = new mongoose.Types.ObjectId();
+    // console.log('REQUEST: ', req);
+    if (req.body._id === null) {
+        delete req.body._id;
+    }
     const transaction = new mongoose.Types.ObjectId();
     // Since the invoice doesn't exist, then save the detail
     const _invoice = new Invoice({
-        _id: invoiceId,
+        _id: new mongoose.Types.ObjectId(),
         ...req.body,
         transaction
     });
@@ -123,11 +126,12 @@ router.post('/', (req, resp, next) => {
     // Save the invoice first and then map transaction ID with it
     _invoice.save().then(invoice => {
         console.log({invoice});
+
         // Since the invoice doesn't exist, then save the detail
         const _transaction = new Transaction({
             _id: transaction,
             source: 'INVOICE',
-            sourceId: invoice._id || invoiceId,
+            sourceId: invoice._id,
             amount: invoice.invoicedAmount,
             business: invoice.business,
             category: 'INCOME',
@@ -137,6 +141,9 @@ router.post('/', (req, resp, next) => {
             status: 'SCHEDULED',
             mode: 'CHEQUE'
         });
+        
+        // Update the work with invoice Ids
+        updateWorksWithInvoiceIds(invoice);
 
         _transaction.save().then(transaction => {
             console.log({transaction});
@@ -226,5 +233,15 @@ router.delete('/:id', auth, (req, resp, next) => {
         });
     });
 });
+
+function updateWorksWithInvoiceIds(invoice) {
+    Work.updateMany(
+        { _id: { $in: invoice.works } },
+        { $set: { invoiceId: invoice._id } },
+        { "multi": true }
+    ).then((res) => {
+        console.log('Work update response ', res);
+    });
+}
 
 module.exports = router;

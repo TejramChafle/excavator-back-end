@@ -42,7 +42,7 @@ router.post("/login", async (req, resp) => {
             });
         } else {
             // GENERATE jwt token with the expiry time
-            const token = jwt.sign({ email: user.email, id: user._id }, process.env.JWT_ACCESS_KEY, { expiresIn: "7d" });
+            const token = jwt.sign({ email: user.email, id: user._id }, process.env.JWT_ACCESS_KEY, { expiresIn: "1d" });
             // TODO: Store the token and other detail in Authentication table
             return resp.status(201).json({
                 user: user,

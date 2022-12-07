@@ -1,8 +1,9 @@
-var express = require('express');
-var mongoose = require('mongoose');
+const express = require('express');
+const mongoose = require('mongoose');
 const auth = require('../auth');
-var router = express.Router();
-var Employee = require('../models/Employee');
+const router = express.Router();
+const Employee = require('../models/Employee');
+const Attendance = require('../models/Attendance');
 /**
  * @swagger
  * /employee:
@@ -37,6 +38,42 @@ router.get('/', auth, (req, resp) => {
             { path: 'createdBy', match: {} },
             { path: 'updatedBy', match: {} },
             { path: 'owner', match: {} }
+        ]
+    }, (error, result) => {
+        // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
+        if (error) return resp.status(500).json({
+            error: error
+        });
+        return resp.status(200).json(result);
+    });
+});
+
+
+router.get('/attendance/:id', (req, resp, next) => {
+    Attendance.findById(req.params.id).exec().then(employee => {
+        return resp.status(200).json(employee);
+    }).catch(error => {
+        console.log('error : ', error);
+        // 204 : No content. There is no content to send for this request, but the headers may be useful.
+        return resp.status(204).json({
+            error: error
+        });
+    });
+});
+
+router.get('/attendance', (req, resp, next) => {
+    let filter = {};
+    filter.business = req.query.business;
+    if (req.query.employee) filter.employee = req.query.employee;
+    if (req.query.startDate) filter.startDate = req.query.startDate;
+    if (req.query.endDate) filter.endDate = req.query.endDate;
+    console.log({filter});
+    Attendance.paginate(filter, {
+        sort: { _id: req.query.sort_order },
+        page: parseInt(req.query.page),
+        limit: parseInt(req.query.limit),
+        populate: [
+            { path: 'employee', match: {} }
         ]
     }, (error, result) => {
         // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
@@ -213,5 +250,29 @@ router.delete('/:id', auth, (req, resp, next) => {
         });
     });
 });
+
+router.post('/attendance', (req, resp, next) => {
+    const _attendance = new Attendance({
+        _id: new mongoose.Types.ObjectId(),
+        ...req.body
+    });
+    _attendance.save()
+        .then(result => {
+            console.log(result);
+            return resp.status(201).json({
+                message: "Employee attendace added successfully",
+                result: result
+            });
+        })
+        .catch(error => {
+            console.log('error : ', error);
+            // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
+            return resp.status(500).json({
+                error: error
+            });
+        });
+});
+
+
 
 module.exports = router;

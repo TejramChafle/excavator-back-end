@@ -21,7 +21,7 @@ var Work     = require('../models/Work');
 // GET works WITH filter, sorting & pagination
 router.get('/', auth, (req, resp) => {
     let filter = {};
-    filter.isActive = req.query.is_active || true;
+    filter.active = req.query.hasOwnProperty('active') ? req.query.active : true;
     if (req.query.name) filter.name = new RegExp('.*' + req.query.name + '.*', 'i');
     if (req.query.rate) filter.rate = req.query.rate;
     if (req.query.billingType) filter.billingType = req.query.billingType;

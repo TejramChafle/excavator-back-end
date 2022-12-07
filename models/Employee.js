@@ -18,11 +18,11 @@ const EmployeeSchema = new mongoose.Schema({
     },
     dateOfBirth: {
         type: String,
-        required: true
+        required: false
     },
     photo: {
         type: String,
-        required: true
+        required: false
     },
 
     // contact info
@@ -126,6 +126,10 @@ const EmployeeSchema = new mongoose.Schema({
         type: Date,
         required: false
     },
+    enabledOn: {
+        type: Date,
+        required: false
+    },
 
     // business id
     business: {
@@ -134,7 +138,7 @@ const EmployeeSchema = new mongoose.Schema({
         required: true
     },
     // soft delete flag
-    isActive: {
+    active: {
         type: Boolean,
         default: true
     },
