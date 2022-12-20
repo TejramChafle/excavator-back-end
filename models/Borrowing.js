@@ -1,15 +1,20 @@
 const mongoose = require('mongoose');
 const Paginate = require('mongoose-paginate');
 
-const ExpendituresSchema = new mongoose.Schema({
+const BorrowingSchema = new mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     date: {
         type: Date,
         required: true
     },
-    place: {
-        type: String,
+    scheduledReturnDate: {
+        type: Date,
         required: false
+    },
+    // BORROWED/LEND
+    type: {
+        type: String,
+        required: true
     },
     // RENT, BIKE, FUEL, GROCERY, TRANSPORTATION, TELEPHONE, HOSTPITAL, INSURANCE, ENTERTAINMENT, SHOPPING, FOOD, UTILITIES, MEMBERSHIP, OTHER
     purpose: {
@@ -20,10 +25,10 @@ const ExpendituresSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    // employee/person involved in transaction/deal
-    employee: {
+    // person from/to borrowed/lend
+    person: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Employee',
+        ref: 'Contact',
         required: false
     },
     // transaction detail id
@@ -60,5 +65,5 @@ const ExpendituresSchema = new mongoose.Schema({
     timestamps: true
 });
 
-ExpendituresSchema.plugin(Paginate);
-module.exports = mongoose.model('Expenditures', ExpendituresSchema);
+BorrowingSchema.plugin(Paginate);
+module.exports = mongoose.model('Borrowing', BorrowingSchema);

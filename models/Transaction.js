@@ -3,7 +3,7 @@ const Paginate = require('mongoose-paginate');
 
 const TransactionSchema = new mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    // Fuel: INVOICE, EMPLOYEE_PAYMENT, FUEL_LOG, FARM_INCOME, OTHER_INCOME, MAINTENANCE, EXPENDITURE
+    // Type: INVOICE, EMPLOYEE_PAYMENT, FUEL_LOG, FARM_INCOME, OTHER_INCOME, MAINTENANCE, EXPENDITURE
     source: {
         type: String,
         required: true

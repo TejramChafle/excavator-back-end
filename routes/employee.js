@@ -218,6 +218,19 @@ router.put('/:id', auth, (req, resp, next) => {
     });
 });
 
+// Delete attendance for the provided ID
+router.delete('/attendance/:id', auth, (req, resp, next) => {
+    Attendance.findByIdAndRemove(req.params.id).exec().then(attendance => {
+        return resp.status(200).json(attendance);
+    }).catch(error => {
+        console.log('error : ', error);
+        // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
+        return resp.status(500).json({
+            error: error
+        });
+    });
+});
+
 
 /**
  * @swagger
@@ -252,24 +265,55 @@ router.delete('/:id', auth, (req, resp, next) => {
 });
 
 router.post('/attendance', (req, resp, next) => {
-    const _attendance = new Attendance({
-        _id: new mongoose.Types.ObjectId(),
-        ...req.body
-    });
-    _attendance.save()
-        .then(result => {
-            console.log(result);
-            return resp.status(201).json({
-                message: "Employee attendace added successfully",
-                result: result
-            });
-        })
-        .catch(error => {
-            console.log('error : ', error);
-            // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
-            return resp.status(500).json({
-                error: error
-            });
+    // check if the attendance is already marked for the provided date range
+    Attendance.find({
+        business: req.body.business,
+        employee: req.body.employee,
+        startDate: {
+            $gte: new Date(req.body.startDate).setHours(0,0,0,0)
+        },
+        endDate: {
+            $lte: new Date(req.body.endDate).setHours(0,0,0,0)
+        }
+    }).exec()
+        .then(attendance => {
+            console.log({ attendance });
+            // If the attendance for the date range already exists, then return error
+            if (attendance && attendance.length) {
+                const start = new Date(req.body.startDate).toDateString();
+                const end = new Date(req.body.endDate).toDateString();
+                let message;
+                if (start === end) {
+                    message = 'The attendance have been already marked for ' + start;
+                } else {
+                    message = 'The attendance have been already marked for employee from ' + start + ' to the ' + end
+                }
+                return resp.status(409).json({
+                    message
+                });
+            } else {
+                const _attendance = new Attendance({
+                    _id: new mongoose.Types.ObjectId(),
+                    ...req.body,
+                    startDate: new Date(req.body.startDate).setHours(0,0,0,0),
+                    endDate: new Date(req.body.endDate).setHours(0,0,0,0)
+                });
+                _attendance.save()
+                    .then(result => {
+                        console.log('_attendance result: ', result);
+                        return resp.status(201).json({
+                            message: "Employee attendace added successfully",
+                            result: result
+                        });
+                    })
+                    .catch(error => {
+                        console.log('error : ', error);
+                        // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
+                        return resp.status(500).json({
+                            error: error
+                        });
+                    });
+            }
         });
 });
 

@@ -18,9 +18,9 @@ const _router = (app) => {
     app.use('/employee', require('./routes/employee'));
     app.use('/work', require('./routes/work'));
     app.use('/invoice', require('./routes/invoice'));
-
-    // Service to save device token and push notification
-    app.use('/push', require('./routes/push'));
+    app.use('/transaction', require('./routes/transaction'));
+    app.use('/expenditure', require('./routes/expenditure'));
+    app.use('/borrowing', require('./routes/borrowing'));
 
     // catch 404 and forward to error handler
     app.use((req, res, next) => {
