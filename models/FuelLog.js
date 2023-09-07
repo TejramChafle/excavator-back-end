@@ -14,7 +14,7 @@ const FuelLogSchema = new mongoose.Schema({
         ref: 'PetrolPump',
         required: true
     },
-    // Fuel rate
+    // Fuel rate/liter
     rate: {
         type: Number,
         required: true

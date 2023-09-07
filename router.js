@@ -21,6 +21,8 @@ const _router = (app) => {
     app.use('/transaction', require('./routes/transaction'));
     app.use('/expenditure', require('./routes/expenditure'));
     app.use('/borrowing', require('./routes/borrowing'));
+    app.use('/revenue', require('./routes/revenue'));
+    app.use('/fuel', require('./routes/fuel'));
 
     // catch 404 and forward to error handler
     app.use((req, res, next) => {
