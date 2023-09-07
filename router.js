@@ -1,6 +1,5 @@
 const createError = require('http-errors');
 // const router = require('./routes/router');
-const swaggerSpec = require('./swagger');
 
 const _router = (app) => {
     app.get('/', (req, res) => {
@@ -39,12 +38,6 @@ const _router = (app) => {
         res.status(err.status || 500);
         // res.send(err.status); // deprecated
         res.sendStatus(err.status);
-    });
-
-    // serve swagger
-    app.get('/swagger.json', function (req, res) {
-        res.setHeader('Content-Type', 'application/json');
-        res.send(swaggerSpec);
     });
 }
 
