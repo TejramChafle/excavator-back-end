@@ -317,6 +317,33 @@ router.post('/attendance', (req, resp, next) => {
         });
 });
 
+router.post('/attendance/multiple', (req, resp, next) => {
+    console.log('req.body: ', req.body);
+    let _attendance = [];
+    req.body.attendence.forEach(element => {
+        _attendance.push({
+            _id: new mongoose.Types.ObjectId(),
+            ...element,
+            startDate: new Date(element.startDate).setHours(0, 0, 0, 0),
+            endDate: new Date(element.endDate).setHours(0, 0, 0, 0)
+        });
+    });
+    Attendance.insertMany(_attendance)
+        .then(result => {
+            console.log('_attendance result: ', result);
+            return resp.status(201).json({
+                message: "Employee attendace added successfully",
+                result: result
+            });
+        })
+        .catch(error => {
+            console.log('error : ', error);
+            // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
+            return resp.status(500).json({
+                error: error
+            });
+        });
 
+});
 
 module.exports = router;

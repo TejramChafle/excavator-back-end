@@ -102,11 +102,12 @@ router.post('/', (req, resp, next) => {
     // First check if the service with name already exists.
     Service.findOne({ name: req.body.name, active: true }).exec()
         .then(service => {
+            // console.log('SERVICE IN DB: ', service);
             // If the service with name already exists, then return error
-            if (service) {
+            if (service && service.description === req.body.description) {
                 // 409 : Conflict. The request could not be completed because of a conflict.
                 return resp.status(409).json({
-                    message: "The service with name " + req.body.name + " already exist."
+                    message: "The service with name " + req.body.name + " and description \" " + req.body.description + " \"already exist."
                 });
             } else {
                 // Since the service doesn't exist, then save the detail

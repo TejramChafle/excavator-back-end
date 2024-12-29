@@ -237,7 +237,7 @@ router.delete('/:id', auth, (req, resp, next) => {
 function updateWorksWithInvoiceIds(invoice) {
     Work.updateMany(
         { _id: { $in: invoice.works } },
-        { $set: { invoiceId: invoice._id } },
+        { $set: { invoiceId: invoice._id, invoiceNumber: invoice.invoiceNumber } },
         { "multi": true }
     ).then((res) => {
         console.log('Work update response ', res);

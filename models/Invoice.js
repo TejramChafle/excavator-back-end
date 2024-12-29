@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Paginate = require('mongoose-paginate');
+const Counter = require('./Counter');
 
 const InvoiceSchema = new mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
@@ -9,6 +10,11 @@ const InvoiceSchema = new mongoose.Schema({
         ref: 'Work',
         required: true
     }],
+    // Auto-incrementing invoice number
+    invoiceNumber: {
+        type: Number,
+        unique: true
+    },
     // contractor/client id
     invoiceTo: {
         type: mongoose.Schema.Types.ObjectId,
@@ -109,6 +115,25 @@ const InvoiceSchema = new mongoose.Schema({
 },
 {
     timestamps: true
+});
+
+// Pre-save middleware to generate an auto-incrementing invoice number
+InvoiceSchema.pre('save', async function (next) {
+    if (this.isNew) {
+        try {
+            const counter = await Counter.findByIdAndUpdate(
+                { _id: 'invoice' },
+                { $inc: { seq: 1 } }, // Increment the sequence number
+                { new: true, upsert: true } // Create the counter if it doesn't exist
+            );
+            this.invoiceNumber = counter.seq;
+            next();
+        } catch (error) {
+            next(error);
+        }
+    } else {
+        next();
+    }
 });
 
 InvoiceSchema.plugin(Paginate);
