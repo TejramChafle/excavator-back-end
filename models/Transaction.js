@@ -15,7 +15,7 @@ const TransactionSchema = new mongoose.Schema({
     },
     // Source reference with ID
     sourceId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         required: true
     },
     // Payment mode: CASH | ONLINE ACCOUNT TRANSFER | BANK ACCOUNT TRANSFER, UPI, CREDIT/DEBIT CARD, PAYTM, CHEQUE, RTGS, NEFT, DD, OTHER-EWALLET

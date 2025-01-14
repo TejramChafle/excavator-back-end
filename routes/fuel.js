@@ -39,7 +39,9 @@ router.get('/', auth, (req, resp) => {
         // populate: { path: 'transaction', match: { method: 'Google Pay' } }
         populate: [
             { path: 'transaction', match: {} },
-            { path: 'petrolPump', match: {} }
+            { path: 'petrolPump', match: {} },
+            { path: 'employee', match: {} },
+            { path: 'vehicle', match: {} }
         ]
     }, (error, result) => {
         // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
@@ -72,31 +74,51 @@ router.get('/', auth, (req, resp) => {
  *       201:
  *         description: Fuel created successfully
  */
-// SAVE REVENUE
-router.post('/', auth, (req, resp, next) => {
-    console.log(req.body);
-    // delete the _id if present in payload, since these ids are not required for creation
-    if (req.body.hasOwnProperty('_id')) delete req.body._id;
-    if (req.body.transaction.hasOwnProperty('_id')) delete req.body.transaction._id;
-    const medadata = {
-        createdBy: req.body.createdBy,
-        updatedBy: req.body.updatedBy,
-        business: req.body.business
-    }
-    const fuelId = new mongoose.Types.ObjectId();
-    const _transaction = new Transaction({
-        _id: new mongoose.Types.ObjectId(),
-        ...req.body.transaction,
-        ...medadata,
-        sourceId: fuelId
-    });
-    console.log('_transaction input ', _transaction);
-    _transaction.save().then(result => {
-        console.log('_transaction result', result);
-        const _fuel = new Fuel({
+// SAVE FUEL LOG
+router.post('/', auth, async (req, resp) => {
+
+    try {
+        // delete the _id if present in payload
+        delete req.body._id;
+        if (req.body.transaction && req.body.transaction._id) {
+            delete req.body.transaction._id;
+        }
+        
+        // Metadata for audit information
+        const medadata = {
+            createdBy: req.body.createdBy,
+            updatedBy: req.body.updatedBy,
+            business: req.body.business
+        };
+        
+        console.log('Saving fuel log', req.body);
+
+        // Create a new transaction
+        const fuelId = new mongoose.Types.ObjectId();
+        const transactionData = new Transaction({
+            _id: new mongoose.Types.ObjectId(),
+            ...req.body.transaction,
+            ...medadata,
+            sourceId: fuelId,
+            source: 'FUEL_LOG',
+            category: 'SPENDING',
+            mode: req.body.paymentMode || 'RTGS',
+            amount: req.body.total,
+            date: new Date(),
+            status: req.body.paymentStatus || 'UNPAID'
+        });
+        
+        console.log('transactionData ', transactionData);
+        
+        const _transaction = new Transaction(transactionData);
+        const savedTransaction = await _transaction.save();
+        console.log('Transaction saved', savedTransaction);
+
+        // Create a new fuel log
+        const fuelData = {
             _id: fuelId,
             ...medadata,
-            transaction: result._id,
+            transaction: savedTransaction._id,
             fuel: req.body.fuel,
             petrolPump: req.body.petrolPump,
             date: req.body.date,
@@ -106,7 +128,29 @@ router.post('/', auth, (req, resp, next) => {
             vehicle: req.body.vehicle,
             employee: req.body.employee,
             invoiceId: req.body.invoiceId
+        };
+
+        console.log('_fuel input ', fuelData);
+        const _fuel = new Fuel(fuelData);
+        const savedFuel = await _fuel.save();
+        console.log('Fuel log saved: ', savedFuel);
+
+        // Success response
+        return resp.status(201).json({
+            message: "Fuel log saved successfully",
+            result: savedFuel
         });
+    } catch (error) {
+        console.error('Error saving fuel log:', error);
+        return resp.status(500).json({
+            message: "An error occurred while saving fuel log",
+            error: error
+        });
+    }
+
+    /* _transaction.save().then(result => {
+        console.log('_transaction result', result);
+        const _fuel = new Fuel();
         console.log('_fuel input ', _fuel);
         _fuel.save().then(result => {
             console.log('fuels result', result);
@@ -127,7 +171,7 @@ router.post('/', auth, (req, resp, next) => {
         return resp.status(500).json({
             error: error
         });
-    });
+    }); */
 });
 
 

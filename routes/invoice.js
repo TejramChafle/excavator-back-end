@@ -25,10 +25,12 @@ const Work  = require('../models/Work');
 router.get('/', auth, (req, resp) => {
     let filter = {};
     filter.active = req.query.is_active || true;
-    if (req.query.name) filter.name = new RegExp('.*' + req.query.name + '.*', 'i');
-    if (req.query.rate) filter.rate = req.query.rate;
-    if (req.query.date) filter.date = req.query.date;
-    if (req.query.billingType) filter.billingType = req.query.billingType;
+    if (req.query.description) filter.description = new RegExp('.*' + req.query.description + '.*', 'i');
+    if (req.query.invoiceNumber) filter.invoiceNumber = req.query.invoiceNumber;
+    if (req.query.invoiceDate) filter.date = new Date(+req.query.invoiceDate).setHours(0,0,0,0);
+    if (req.query.status) filter.status = req.query.status;
+    if (req.query.total) filter.invoicedAmount = req.query.total;
+    if (req.query.customer) filter.invoiceTo = req.query.customer;
     filter.business = req.query.businessId;
     Invoice.paginate(filter, {
             sort: { _id: req.query.sort_order },

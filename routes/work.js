@@ -21,17 +21,40 @@ var Work     = require('../models/Work');
 // GET works WITH filter, sorting & pagination
 router.get('/', auth, (req, resp) => {
     let filter = {};
+    let populateArr = [{ path: 'customer', match: {} }, { path: 'service', match: {} }];
     filter.active = req.query.hasOwnProperty('active') ? req.query.active : true;
-    if (req.query.name) filter.name = new RegExp('.*' + req.query.name + '.*', 'i');
-    if (req.query.rate) filter.rate = req.query.rate;
-    if (req.query.billingType) filter.billingType = req.query.billingType;
+    if (req.query.site) filter.site = new RegExp('.*' + req.query.site + '.*', 'i');
+    if (req.query.customer) filter.customer = req.query.customer;
+    if (req.query.service) filter.service = req.query.service;
+    if (req.query.createdAt) filter.createdAt = req.query.createdAt;
+    if (req.query.total) filter.total = req.query.total;
+    if (req.query.invoiceNumber) { 
+        filter.invoiceId.invoiceNumber = req.query.invoiceNumber; 
+        populateArr.push({
+            path: 'invoiceId',
+            match: {
+                invoiceNumber: req.query.invoiceNumber
+            }
+        })
+    };
+    if (req.query.date && !req.query.toDate) {
+        filter.date = new Date(+req.query.date).setHours(0,0,0,0);
+    };
+    if (!req.query.date && req.query.toDate) { 
+        filter.date = new Date(+req.query.toDate).setHours(0,0,0,0);
+    };
+    if (req.query.date && req.query.toDate) { 
+        filter.date = {
+            $gte: new Date(+req.query.date).setHours(0,0,0,0),
+            $lte: new Date(+req.query.toDate).setHours(0,0,0,0)
+        }
+    };
     filter.business = req.query.businessId;
-    console.log({filter});
     Work.paginate(filter, {
             sort: { _id: req.query.sort_order },
             page: parseInt(req.query.page),
             limit: parseInt(req.query.limit),
-            populate: [{ path: 'customer', match: {} }, { path: 'service', match: {} }]
+            populate: populateArr
         }, (error, result) => {
         // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
         if (error) return resp.status(500).json({

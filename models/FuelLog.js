@@ -8,6 +8,11 @@ const FuelLogSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    // Fuel filled date
+    date: {
+        type: Date,
+        required: true
+    },
     // petrol pump detail
     petrolPump: {
         type: mongoose.Schema.Types.ObjectId,
