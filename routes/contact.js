@@ -10,9 +10,11 @@ router.get('/', auth, (req, resp) => {
 
     let filter = {};
     filter.isActive = req.query.isActive || true;
-    if (req.query.firstName) filter.firstName = new RegExp('.*' + req.query.firstName + '.*', 'i');
+    if (req.query.name) filter.firstName = new RegExp('.*' + req.query.name + '.*', 'i');
     if (req.query.lastName) filter.lastName = new RegExp('.*' + req.query.lastName + '.*', 'i');
-    if (req.query.gender) filter.gender = new RegExp('^' + req.query.gender + '$', 'i');
+    if (req.query.contactType) filter.contactType = req.query.contactType;
+    if (req.query.hasOwnProperty('isStarred')) filter.isStarred = req.query.isStarred;
+    if (req.query.gender) filter.gender = req.query.gender;
     if (req.query.alternatePhone) filter.alternatePhone = new RegExp('.*' + req.query.alternatePhone + '.*', 'i');
     if (req.query.phone) filter.phone = new RegExp('.*' + req.query.phone + '.*', 'i');
     if (req.query.email) filter.email = new RegExp('.*' + req.query.email + '.*', 'i');

@@ -59,6 +59,14 @@ const ContactSchema = new mongoose.Schema({
         ref: 'Business',
         required: true
     },
+    address: {
+        type: String,
+        required: false
+    },
+    isStarred: {
+        type: Boolean,
+        default: false
+    },
     // soft delete flag
     isActive: {
         type: Boolean,
