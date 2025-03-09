@@ -53,12 +53,6 @@ const ContactSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    // business id
-    business: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Business',
-        required: true
-    },
     address: {
         type: String,
         required: false
@@ -66,6 +60,12 @@ const ContactSchema = new mongoose.Schema({
     isStarred: {
         type: Boolean,
         default: false
+    },
+    // business id
+    business: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Business',
+        required: true
     },
     // soft delete flag
     isActive: {

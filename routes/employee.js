@@ -22,13 +22,15 @@ const Attendance = require('../models/Attendance');
 // GET customers WITH filter, sorting & pagination
 router.get('/', auth, (req, resp) => {
     let filter = {};
-    // filter.active = req.query.hasOwnProperty('isActive') ? req.query.isActive : true;
-    if (req.query.name) filter.name = new RegExp('.*' + req.query.name + '.*', 'i');
-    if (req.query.place) filter.place = new RegExp('.*' + req.query.place + '.*', 'i');
-    if (req.query.email) filter.email = new RegExp('.*' + req.query.email + '.*', 'i');
-    if (req.query.phone) filter.phone = new RegExp('.*' + req.query.phone + '.*', 'i');
-    if (req.query.owner) filter.owner = req.query.owner;
     filter.business = req.query.businessId;
+    filter.active = req.query.hasOwnProperty('isActive') ? req.query.isActive : true;
+    // Search the name in both first & last name
+    if (req.query.name) {
+        filter.$or = [
+            { firstName: { $regex: req.query.name, $options: "i" } },
+            { lastName: { $regex: req.query.name, $options: "i" } }
+        ]
+    }
     console.log({filter});
     Employee.paginate(filter, {
         sort: { _id: req.query.sort_order },

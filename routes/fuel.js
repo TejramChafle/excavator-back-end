@@ -147,31 +147,6 @@ router.post('/', auth, async (req, resp) => {
             error: error
         });
     }
-
-    /* _transaction.save().then(result => {
-        console.log('_transaction result', result);
-        const _fuel = new Fuel();
-        console.log('_fuel input ', _fuel);
-        _fuel.save().then(result => {
-            console.log('fuels result', result);
-            return resp.status(201).json({
-                message: "Fuel information saved successfully",
-                result: result
-            });
-        }).catch(error => {
-            console.log('fuels error : ', error);
-            // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
-            return resp.status(500).json({
-                error: error
-            });
-        });
-    }).catch(error => {
-        console.log('fuel error : ', error);
-        // 500 : Internal Sever Error. The request was not completed. The server met an unexpected condition.
-        return resp.status(500).json({
-            error: error
-        });
-    }); */
 });
 
 

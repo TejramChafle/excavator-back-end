@@ -9,9 +9,8 @@ var router = express.Router();
 router.get('/', auth, (req, resp) => {
 
     let filter = {};
-    filter.isActive = req.query.isActive || true;
-    if (req.query.name) filter.firstName = new RegExp('.*' + req.query.name + '.*', 'i');
-    if (req.query.lastName) filter.lastName = new RegExp('.*' + req.query.lastName + '.*', 'i');
+    filter.isActive = req.query.hasOwnProperty('active') ? req.query.active : true;
+    filter.business = req.query.businessId;
     if (req.query.contactType) filter.contactType = req.query.contactType;
     if (req.query.hasOwnProperty('isStarred')) filter.isStarred = req.query.isStarred;
     if (req.query.gender) filter.gender = req.query.gender;
@@ -20,6 +19,13 @@ router.get('/', auth, (req, resp) => {
     if (req.query.email) filter.email = new RegExp('.*' + req.query.email + '.*', 'i');
     if (req.query.company) filter.company = new RegExp('.*' + req.query.company + '.*', 'i');
     if (req.query.designation) filter.designation = new RegExp('.*' + req.query.designation + '.*', 'i');
+    // Search the name in both first & last name
+    if (req.query.name) {
+        filter.$or = [
+            { firstName: { $regex: req.query.name, $options: "i" } },
+            { lastName: { $regex: req.query.name, $options: "i" } }
+        ]
+    }
 
     Contact.paginate(
         filter,
