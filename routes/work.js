@@ -121,14 +121,16 @@ router.get('/:id', auth, (req, resp, next) => {
  */
 // SAVE Work
 router.post('/', (req, resp, next) => {
-    console.log('REQUEST: ', req);
+    // console.log('saving work, req.body: ', req.body);
     const _work = new Work({
         _id: new mongoose.Types.ObjectId(),
         ...req.body
     });
 
+    // console.log('_work: ', _work);
+
     _work.save().then(result => {
-        console.log(result);
+        // console.log(result);
         return resp.status(201).json({
             message: "Work added successfully",
             result: result

@@ -55,11 +55,6 @@ const WorkSchema = mongoose.Schema({
         ref: 'Invoice',
     	required: false
     },
-    // Auto-incrementing invoice number
-    invoiceNumber: {
-        type: Number,
-        unique: true
-    },
     vehicle: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Vehicle',
